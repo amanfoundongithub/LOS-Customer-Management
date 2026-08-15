@@ -1,0 +1,19 @@
+spring:
+  application:
+    name: customer_management
+
+logging:
+  pattern:
+    console: >-
+      %d{yyyy-MM-dd HH:mm:ss.SSS}
+      [%thread]
+      %-5level
+      [%X{correlationId}]
+      [%X{traceId}]
+      %logger{36}
+      - %msg%n
+
+rabbitmq:
+  outbox:
+    poll-interval-ms: 1000
+    batch-size: 100
