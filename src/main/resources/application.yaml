@@ -1,19 +1,70 @@
 spring:
   application:
-    name: customer_management
-
-logging:
-  pattern:
-    console: >-
-      %d{yyyy-MM-dd HH:mm:ss.SSS}
-      [%thread]
-      %-5level
-      [%X{correlationId}]
-      [%X{traceId}]
-      %logger{36}
-      - %msg%n
-
+    name: customer-management-service
+  mongodb:
+    uri: ${MONGODB_URI:mongodb://localhost:27017/customer_management}
+    database: ${MONGODB_DATABASE:customer_management}
+  rabbitmq:
+    host: ${RABBITMQ_HOST:localhost}
+    port: ${RABBITMQ_PORT:5672}
+    username: ${RABBITMQ_USERNAME:guest}
+    password: ${RABBITMQ_PASSWORD:guest}
+    publisher-confirm-type: correlated
+    publisher-returns: true
+    template:
+      mandatory: true
+    listener:
+      simple:
+        acknowledge-mode: auto
+        prefetch: 10
+        concurrency: 1
+        max-concurrency: 5
+server:
+  port: ${SERVER_PORT:8083}
+  servlet:
+    context-path: /customer-management
+customer-management:
+  customer-number:
+    prefix: CUST
+    length: 10
 rabbitmq:
+  customer:
+    exchange: los.customer.exchange
+    routing-keys:
+      customer-created: customer.created
+      customer-updated: customer.updated
+      customer-status-changed: customer.status.changed
+      customer-address-changed: customer.address.changed
+      customer-identification-changed: customer.identification.changed
   outbox:
-    poll-interval-ms: 1000
-    batch-size: 100
+    poll-interval-ms: ${OUTBOX_POLL_INTERVAL_MS:2000}
+    batch-size: ${OUTBOX_BATCH_SIZE:50}
+    max-retries: ${OUTBOX_MAX_RETRIES:10}
+api:
+  endpoint:
+    customer:
+      url: /api/v1/customers
+    health:
+      url: /api/v1/health
+logging:
+  level:
+    root: INFO
+    com.loan_org.customer_management: INFO
+    org.springframework.data.mongodb: INFO
+    org.springframework.amqp: INFO
+management:
+  endpoints:
+    web:
+      exposure:
+        include:
+          - health
+          - info
+          - metrics
+  endpoint:
+    health:
+      show-details: when_authorized
+info:
+  app:
+    name: Customer Management Service
+    description: Customer lifecycle and profile management service
+    version: 0.0.1
