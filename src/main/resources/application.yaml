@@ -96,7 +96,7 @@ config:
     naming:
       strategy: LOWER_CAMEL_CASE
   
-  mdc:
+  mdc: # MDC configuration
     enabled: true 
     correlation:
       header: X-Correlation-Id 
@@ -114,7 +114,7 @@ config:
     validation:
       maxIdLength: 128
 
-  request-logging:
+  request-logging: # Request logging configuration
     enabled: true 
     includeQueryString: true 
     includeCorrelationId: true 
