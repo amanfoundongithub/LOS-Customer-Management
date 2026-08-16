@@ -1,9 +1,9 @@
 package com.loan_org.customer_management.filter;
 
-import jakarta.servlet.FilterChain;
-import jakarta.servlet.ServletException;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
+import com.loan_org.customer_management.config.logging.RequestLoggingProperties;
+import com.loan_org.customer_management.config.mdc.MdcProperties;
+
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.MDC;
 import org.springframework.core.Ordered;
@@ -11,13 +11,22 @@ import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
+import jakarta.servlet.FilterChain;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+
 import java.io.IOException;
 
 @Component
 @Order(Ordered.LOWEST_PRECEDENCE)
+@RequiredArgsConstructor
 @Slf4j
 public class RequestLoggingFilter
         extends OncePerRequestFilter {
+
+    private final RequestLoggingProperties properties;
+    private final MdcProperties mdcProperties;
 
     @Override
     protected void doFilterInternal(
@@ -26,50 +35,61 @@ public class RequestLoggingFilter
             FilterChain filterChain
     ) throws ServletException, IOException {
 
-        long startTime =
-                System.currentTimeMillis();
+        if (!properties.isEnabled()) {
+            filterChain.doFilter(request, response);
+            return;
+        }
 
-        String method =
-                request.getMethod();
-
-        String uri =
-                request.getRequestURI();
-
+        long startTime = System.nanoTime();
+        String method = request.getMethod();
+        String uri = request.getRequestURI();
         String queryString =
-                request.getQueryString();
-
-        String requestId =
-                MDC.get(MdcHeaderFilter.CORRELATION_ID);
-
+                properties.isIncludeQueryString()
+                        ? request.getQueryString()
+                        : null;
+        String correlationId =
+                properties.isIncludeCorrelationId()
+                        ? getCorrelationId()
+                        : null;
+        String traceId =
+                properties.isIncludeTraceId()
+                        ? getTraceId()
+                        : null;
         log.info(
-                "Incoming request | method={} uri={} query={} correlationId={}",
+                "Incoming request | method={} uri={} query={} correlationId={} traceId={}",
                 method,
                 uri,
                 queryString,
-                requestId
+                correlationId,
+                traceId
         );
 
         try {
-
-            filterChain.doFilter(
-                    request,
-                    response
-            );
-
+            filterChain.doFilter(request, response);
         } finally {
-
-            long duration =
-                    System.currentTimeMillis()
-                            - startTime;
+            long durationMs =
+                    (System.nanoTime() - startTime)
+                            / 1_000_000;
 
             log.info(
-                    "Completed request | method={} uri={} status={} durationMs={} correlationId={}",
+                    "Completed request | method={} uri={} status={} durationMs={} correlationId={} traceId={}",
                     method,
                     uri,
                     response.getStatus(),
-                    duration,
-                    requestId
+                    properties.isIncludeDuration()
+                            ? durationMs
+                            : null,
+                    correlationId,
+                    traceId
             );
         }
+    }
+
+    private String getCorrelationId() {
+        return MDC.get(mdcProperties.getCorrelation().getMdcKey());
+    }
+
+    private String getTraceId() {
+        return MDC.get(mdcProperties.getTrace().getMdcKey());
     }
 }

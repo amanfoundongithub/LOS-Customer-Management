@@ -113,3 +113,10 @@ config:
       includeTraceId: true
     validation:
       maxIdLength: 128
+
+  request-logging:
+    enabled: true 
+    includeQueryString: true 
+    includeCorrelationId: true 
+    includeTraceId: true 
+    includeDuration: true 
