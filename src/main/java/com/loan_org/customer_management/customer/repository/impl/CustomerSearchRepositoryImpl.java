@@ -4,7 +4,6 @@ import com.loan_org.customer_management.customer.entity.CustomerDocument;
 import com.loan_org.customer_management.customer.enums.CustomerStatus;
 import com.loan_org.customer_management.customer.enums.CustomerType;
 import com.loan_org.customer_management.customer.repository.CustomerSearchRepository;
-
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -18,6 +17,7 @@ import org.springframework.util.StringUtils;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Pattern;
 
 @Repository
 @RequiredArgsConstructor
@@ -33,31 +33,18 @@ public class CustomerSearchRepositoryImpl
             CustomerType customerType,
             Instant createdFrom,
             Instant createdTo,
-            Pageable pageable
-    ) {
+            Pageable pageable) {
 
         Query query = new Query();
 
         List<Criteria> criteriaList = new ArrayList<>();
 
-        /*
-         * ---------------------------------------------------------
-         * Free-text search
-         * ---------------------------------------------------------
-         *
-         * Searches:
-         * - customer number
-         * - IAM user ID
-         * - first name
-         * - last name
-         * - email
-         * - mobile number
-         */
         if (StringUtils.hasText(search)) {
 
+            String normalizedSearch = search.trim();
+
             String escapedSearch =
-                    java.util.regex.Pattern
-                            .quote(search.trim());
+                    Pattern.quote(normalizedSearch);
 
             Criteria searchCriteria = new Criteria().orOperator(
                     Criteria.where("customerNumber")
@@ -82,54 +69,31 @@ public class CustomerSearchRepositoryImpl
             criteriaList.add(searchCriteria);
         }
 
-        /*
-         * ---------------------------------------------------------
-         * Status filter
-         * ---------------------------------------------------------
-         */
         if (status != null) {
             criteriaList.add(
                     Criteria.where("status").is(status)
             );
         }
 
-        /*
-         * ---------------------------------------------------------
-         * Customer type filter
-         * ---------------------------------------------------------
-         */
         if (customerType != null) {
             criteriaList.add(
                     Criteria.where("customerType").is(customerType)
             );
         }
 
-        /*
-         * ---------------------------------------------------------
-         * Created date range
-         * ---------------------------------------------------------
-         */
         if (createdFrom != null) {
             criteriaList.add(
-                    Criteria.where("createdAt")
-                            .gte(createdFrom)
+                    Criteria.where("createdAt").gte(createdFrom)
             );
         }
 
         if (createdTo != null) {
             criteriaList.add(
-                    Criteria.where("createdAt")
-                            .lte(createdTo)
+                    Criteria.where("createdAt").lte(createdTo)
             );
         }
 
-        /*
-         * ---------------------------------------------------------
-         * Combine filters
-         * ---------------------------------------------------------
-         */
         if (!criteriaList.isEmpty()) {
-
             query.addCriteria(
                     new Criteria().andOperator(
                             criteriaList.toArray(new Criteria[0])
@@ -137,21 +101,11 @@ public class CustomerSearchRepositoryImpl
             );
         }
 
-        /*
-         * ---------------------------------------------------------
-         * Count before pagination
-         * ---------------------------------------------------------
-         */
         long total = mongoTemplate.count(
-                Query.of(query).limit(-1).skip(-1),
+                Query.of(query),
                 CustomerDocument.class
         );
 
-        /*
-         * ---------------------------------------------------------
-         * Apply pagination and sorting
-         * ---------------------------------------------------------
-         */
         query.with(pageable);
 
         List<CustomerDocument> customers =

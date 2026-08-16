@@ -17,17 +17,10 @@ import java.time.Instant;
 
 @Service
 @RequiredArgsConstructor
-public class CustomerSearchServiceImpl
-        implements CustomerSearchService {
+public class CustomerSearchServiceImpl implements CustomerSearchService {
 
     private final CustomerRepository customerRepository;
-
     private final CustomerMapper customerMapper;
-
-
-    // ============================================================
-    // SEARCH CUSTOMERS
-    // ============================================================
 
     @Override
     public Page<CustomerSummaryResponse> searchCustomers(
@@ -36,34 +29,12 @@ public class CustomerSearchServiceImpl
             CustomerType customerType,
             Instant createdFrom,
             Instant createdTo,
-            Pageable pageable
-    ) {
+            Pageable pageable) {
 
-        /*
-         * --------------------------------------------------------
-         * 1. Normalize search input
-         * --------------------------------------------------------
-         */
-        String normalizedSearch =
-                normalizeSearch(search);
+        String normalizedSearch = normalizeSearch(search);
 
+        validateDateRange(createdFrom, createdTo);
 
-        /*
-         * --------------------------------------------------------
-         * 2. Validate date range
-         * --------------------------------------------------------
-         */
-        validateDateRange(
-                createdFrom,
-                createdTo
-        );
-
-
-        /*
-         * --------------------------------------------------------
-         * 3. Query MongoDB
-         * --------------------------------------------------------
-         */
         Page<CustomerDocument> customers =
                 customerRepository.searchCustomers(
                         normalizedSearch,
@@ -74,25 +45,10 @@ public class CustomerSearchServiceImpl
                         pageable
                 );
 
-
-        /*
-         * --------------------------------------------------------
-         * 4. Convert entities -> summary responses
-         * --------------------------------------------------------
-         */
-        return customers.map(
-                customerMapper::toSummaryResponse
-        );
+        return customers.map(customerMapper::toSummaryResponse);
     }
 
-
-    // ============================================================
-    // NORMALIZE SEARCH
-    // ============================================================
-
-    private String normalizeSearch(
-            String search
-    ) {
+    private String normalizeSearch(String search) {
 
         if (!StringUtils.hasText(search)) {
             return null;
@@ -101,22 +57,15 @@ public class CustomerSearchServiceImpl
         return search.trim();
     }
 
-
-    // ============================================================
-    // DATE VALIDATION
-    // ============================================================
-
     private void validateDateRange(
             Instant createdFrom,
-            Instant createdTo
-    ) {
+            Instant createdTo) {
 
         if (createdFrom == null || createdTo == null) {
             return;
         }
 
         if (createdFrom.isAfter(createdTo)) {
-
             throw new IllegalArgumentException(
                     "createdFrom cannot be after createdTo"
             );

@@ -6,10 +6,12 @@ import com.loan_org.customer_management.customer.enums.CustomerStatus;
 import com.loan_org.customer_management.customer.mapper.CustomerMapper;
 import com.loan_org.customer_management.customer.repository.CustomerRepository;
 import com.loan_org.customer_management.customer.service.CustomerLifecycleService;
+import com.loan_org.customer_management.event.publisher.CustomerEventPublisher;
 import com.loan_org.customer_management.exception.CustomerNotFoundException;
 import com.loan_org.customer_management.exception.InvalidCustomerStateException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
 
@@ -19,138 +21,81 @@ public class CustomerLifecycleServiceImpl
         implements CustomerLifecycleService {
 
     private final CustomerRepository customerRepository;
-
     private final CustomerMapper customerMapper;
-
-
-
-    // ============================================================
-    // ACTIVATE CUSTOMER
-    // ============================================================
+    private final CustomerEventPublisher customerEventPublisher;
 
     @Override
-    public CustomerResponse activateCustomer(
-            String customerId
-    ) {
+    @Transactional
+    public CustomerResponse activateCustomer(String customerId) {
 
-        CustomerDocument customer =
-                findCustomer(customerId);
-
-        validateTransition(
-                customer.getStatus(),
+        return changeStatus(
+                customerId,
                 CustomerStatus.ACTIVE
         );
-
-        customer.setStatus(
-                CustomerStatus.ACTIVE
-        );
-
-        updateLifecycleTimestamp(customer);
-
-        CustomerDocument savedCustomer =
-                customerRepository.save(customer);
-
-        return customerMapper.toResponse(savedCustomer);
     }
 
-
-    // ============================================================
-    // SUSPEND CUSTOMER
-    // ============================================================
-
     @Override
-    public CustomerResponse suspendCustomer(
-            String customerId
-    ) {
+    @Transactional
+    public CustomerResponse suspendCustomer(String customerId) {
 
-        CustomerDocument customer =
-                findCustomer(customerId);
-
-        validateTransition(
-                customer.getStatus(),
+        return changeStatus(
+                customerId,
                 CustomerStatus.SUSPENDED
         );
-
-        customer.setStatus(
-                CustomerStatus.SUSPENDED
-        );
-
-        updateLifecycleTimestamp(customer);
-
-        CustomerDocument savedCustomer =
-                customerRepository.save(customer);
-
-        return customerMapper.toResponse(savedCustomer);
     }
 
+    @Override
+    @Transactional
+    public CustomerResponse deactivateCustomer(String customerId) {
 
-    // ============================================================
-    // DEACTIVATE CUSTOMER
-    // ============================================================
+        return changeStatus(
+                customerId,
+                CustomerStatus.DEACTIVATED
+        );
+    }
 
     @Override
-    public CustomerResponse deactivateCustomer(
-            String customerId
-    ) {
+    @Transactional
+    public CustomerResponse closeCustomer(String customerId) {
+
+        return changeStatus(
+                customerId,
+                CustomerStatus.CLOSED
+        );
+    }
+
+    private CustomerResponse changeStatus(
+            String customerId,
+            CustomerStatus targetStatus) {
 
         CustomerDocument customer =
                 findCustomer(customerId);
 
+        CustomerStatus previousStatus =
+                customer.getStatus();
+
         validateTransition(
-                customer.getStatus(),
-                CustomerStatus.DEACTIVATED
+                previousStatus,
+                targetStatus
         );
 
-        customer.setStatus(
-                CustomerStatus.DEACTIVATED
-        );
-
-        updateLifecycleTimestamp(customer);
+        customer.setStatus(targetStatus);
+        customer.setUpdatedAt(Instant.now());
 
         CustomerDocument savedCustomer =
                 customerRepository.save(customer);
 
-        return customerMapper.toResponse(savedCustomer);
-    }
-
-
-    // ============================================================
-    // CLOSE CUSTOMER
-    // ============================================================
-
-    @Override
-    public CustomerResponse closeCustomer(
-            String customerId
-    ) {
-
-        CustomerDocument customer =
-                findCustomer(customerId);
-
-        validateTransition(
-                customer.getStatus(),
-                CustomerStatus.CLOSED
+        customerEventPublisher.publishCustomerStatusChanged(
+                savedCustomer,
+                previousStatus,
+                targetStatus
         );
-
-        customer.setStatus(
-                CustomerStatus.CLOSED
-        );
-
-        updateLifecycleTimestamp(customer);
-
-        CustomerDocument savedCustomer =
-                customerRepository.save(customer);
 
         return customerMapper.toResponse(savedCustomer);
     }
-
-
-    // ============================================================
-    // FIND CUSTOMER
-    // ============================================================
 
     private CustomerDocument findCustomer(
-            String customerId
-    ) {
+            String customerId) {
 
         return customerRepository
                 .findById(customerId)
@@ -162,25 +107,17 @@ public class CustomerLifecycleServiceImpl
                 );
     }
 
-
-    // ============================================================
-    // VALIDATE STATE TRANSITION
-    // ============================================================
-
     private void validateTransition(
             CustomerStatus currentStatus,
-            CustomerStatus targetStatus
-    ) {
+            CustomerStatus targetStatus) {
 
         if (currentStatus == null) {
-
             throw new InvalidCustomerStateException(
                     "Customer current status cannot be null"
             );
         }
 
         if (currentStatus == targetStatus) {
-
             throw new InvalidCustomerStateException(
                     "Customer is already in status: "
                             + currentStatus
@@ -201,19 +138,16 @@ public class CustomerLifecycleServiceImpl
                     case ACTIVE ->
                             targetStatus ==
                                     CustomerStatus.SUSPENDED
-                                    ||
-                                    targetStatus ==
-                                            CustomerStatus.DEACTIVATED
-                                    ||
-                                    targetStatus ==
-                                            CustomerStatus.CLOSED;
+                                    || targetStatus ==
+                                    CustomerStatus.DEACTIVATED
+                                    || targetStatus ==
+                                    CustomerStatus.CLOSED;
 
                     case SUSPENDED ->
                             targetStatus ==
                                     CustomerStatus.ACTIVE
-                                    ||
-                                    targetStatus ==
-                                            CustomerStatus.CLOSED;
+                                    || targetStatus ==
+                                    CustomerStatus.CLOSED;
 
                     case DEACTIVATED ->
                             targetStatus ==
@@ -221,12 +155,12 @@ public class CustomerLifecycleServiceImpl
 
                     case CLOSED ->
                             false;
-                    default -> 
+
+                    default ->
                             false;
                 };
 
         if (!validTransition) {
-
             throw new InvalidCustomerStateException(
                     "Invalid customer status transition: "
                             + currentStatus
@@ -234,19 +168,5 @@ public class CustomerLifecycleServiceImpl
                             + targetStatus
             );
         }
-    }
-
-
-    // ============================================================
-    // LIFECYCLE TIMESTAMP
-    // ============================================================
-
-    private void updateLifecycleTimestamp(
-            CustomerDocument customer
-    ) {
-
-        customer.setUpdatedAt(
-                Instant.now()
-        );
     }
 }
