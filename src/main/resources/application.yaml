@@ -4,6 +4,12 @@ spring:
   mongodb:
     uri: ${MONGODB_URI:mongodb://localhost:27017/customer_management}
     database: ${MONGODB_DATABASE:customer_management}
+    representation:
+      uuid: standard
+  data:
+    mongodb:
+        auto-index-creation: false
+
   rabbitmq:
     host: ${RABBITMQ_HOST:localhost}
     port: ${RABBITMQ_PORT:5672}
