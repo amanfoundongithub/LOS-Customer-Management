@@ -73,7 +73,6 @@ info:
 
 # Application configuration 
 config:
-
   jackson: # Configure the Jackson here 
     serialization:
       write-dates-as-timestamps: false
@@ -91,7 +90,6 @@ config:
       content: ALWAYS
     naming:
       strategy: LOWER_CAMEL_CASE
-  
   mdc: # MDC configuration
     enabled: true 
     correlation:
@@ -109,7 +107,6 @@ config:
       includeTraceId: true
     validation:
       maxIdLength: 128
-
   request-logging: # Request logging configuration
     enabled: true 
     includeQueryString: true 
@@ -127,32 +124,27 @@ api:
 event:
   rabbitmq:
     enabled: true
-
     exchange:
       name: customer.events
       type: topic
       durable: true
       auto-delete: false
-
     customer-events:
       name: customer.events.queue
       durable: true
       exclusive: false
       auto-delete: false
       routing-key: customer.*
-
     publisher:
       enabled: true
       confirms: true
       returns: true
-
     consumer:
       enabled: false
       concurrency: 1
       max-concurrency: 5
       prefetch: 10
       acknowledgement-mode: manual
-
     retry:
       enabled: true
       max-attempts: 3
