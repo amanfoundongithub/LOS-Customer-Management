@@ -15,6 +15,7 @@ spring:
     port: ${RABBITMQ_PORT:5672}
     username: ${RABBITMQ_USERNAME:guest}
     password: ${RABBITMQ_PASSWORD:guest}
+    connection-timeout: 5000
     publisher-confirm-type: correlated
     publisher-returns: true
     template:
@@ -46,12 +47,7 @@ rabbitmq:
     poll-interval-ms: ${OUTBOX_POLL_INTERVAL_MS:2000}
     batch-size: ${OUTBOX_BATCH_SIZE:50}
     max-retries: ${OUTBOX_MAX_RETRIES:10}
-api:
-  endpoint:
-    customer:
-      url: /api/v1/customers
-    health:
-      url: /api/v1/health
+
 logging:
   level:
     root: INFO
@@ -120,3 +116,49 @@ config:
     includeCorrelationId: true 
     includeTraceId: true 
     includeDuration: true 
+
+# API configuration
+api:
+  version: v1 
+  customer:
+    basePath: /api/v1/customers 
+
+# Event configuration (RabbitMQ for now)
+event:
+  rabbitmq:
+    enabled: true
+
+    exchange:
+      name: customer.events
+      type: topic
+      durable: true
+      auto-delete: false
+
+    customer-events:
+      name: customer.events.queue
+      durable: true
+      exclusive: false
+      auto-delete: false
+      routing-key: customer.*
+
+    publisher:
+      enabled: true
+      confirms: true
+      returns: true
+
+    consumer:
+      enabled: false
+      concurrency: 1
+      max-concurrency: 5
+      prefetch: 10
+      acknowledgement-mode: manual
+
+    retry:
+      enabled: true
+      max-attempts: 3
+      initial-interval-ms: 1000
+      multiplier: 2.0
+      max-interval-ms: 10000
+      dead-letter-enabled: true
+      dead-letter-exchange: customer.events.dlx
+      dead-letter-queue: customer.events.dlq
