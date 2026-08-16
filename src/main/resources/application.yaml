@@ -95,3 +95,21 @@ config:
       content: ALWAYS
     naming:
       strategy: LOWER_CAMEL_CASE
+  
+  mdc:
+    enabled: true 
+    correlation:
+      header: X-Correlation-Id 
+      mdcKey: correlationId 
+      acceptIncoming: true 
+      generateIfMissing: true
+    trace:
+      header: X-Trace-Id 
+      mdcKey: traceId 
+      acceptIncoming: true 
+      generateIfMissing: true
+    response:
+      includeCorrelationId: true 
+      includeTraceId: true
+    validation:
+      maxIdLength: 128
