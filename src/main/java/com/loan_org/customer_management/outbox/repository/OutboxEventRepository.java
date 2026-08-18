@@ -4,15 +4,26 @@ import com.loan_org.customer_management.outbox.entity.OutboxEventDocument;
 import com.loan_org.customer_management.outbox.entity.OutboxEventStatus;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.mongodb.repository.MongoRepository;
+import org.springframework.data.mongodb.repository.Query;
 
+import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
 
-public interface OutboxEventRepository
-        extends MongoRepository<OutboxEventDocument, String> {
+public interface OutboxEventRepository extends MongoRepository<OutboxEventDocument, String> {
 
-    List<OutboxEventDocument> findByStatusOrderByCreatedAtAsc(
+    @Query("""
+            {
+                'status': ?0,
+                '$or': [
+                    { 'nextAttemptAt': null },
+                    { 'nextAttemptAt': { '$lte': ?1 } }
+                ]
+            }
+            """)
+    List<OutboxEventDocument> findEligibleEvents(
             OutboxEventStatus status,
+            Instant now,
             Pageable pageable
     );
 
