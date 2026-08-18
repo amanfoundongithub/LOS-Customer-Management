@@ -6,7 +6,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 
 @Getter
 @Setter
-@ConfigurationProperties(prefix = "config.request-logging")
+@ConfigurationProperties(prefix = "filter.request-logging")
 public class RequestLoggingProperties {
     private boolean enabled = true;
     private boolean includeQueryString = true;

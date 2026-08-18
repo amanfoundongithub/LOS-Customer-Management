@@ -47,6 +47,24 @@ info:
 
 # Application configuration 
 config:
+  http: # HTTP configuration here
+    enabled: true 
+    connectTimeoutMs: 3000
+    readTimeoutMs: 5000
+    writeTimeoutMs: 5000
+    maxInMemorySizeMb: 10
+    retry:
+      enabled: true 
+      maxAttempts: 3
+      initialIntervalMs: 500
+      multiplier: 2
+      maxIntervalMs: 5000
+    headers:
+      propagateCorrelationId: true 
+      propagateTraceId: true
+      correlationHeader: X-Correlation-Id
+      traceHeader: X-Trace-Id
+      userAgent: customer-management-service
   jackson: # Configure the Jackson here 
     serialization:
       write-dates-as-timestamps: false
@@ -64,6 +82,8 @@ config:
       content: ALWAYS
     naming:
       strategy: LOWER_CAMEL_CASE
+
+filter:
   mdc: # MDC configuration
     enabled: true 
     correlation:

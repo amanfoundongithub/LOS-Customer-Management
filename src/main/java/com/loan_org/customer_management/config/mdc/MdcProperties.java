@@ -7,7 +7,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-@ConfigurationProperties(prefix = "config.mdc")
+@ConfigurationProperties(prefix = "filter.mdc")
 public class MdcProperties {
     private boolean enabled = true;
     private Correlation correlation = new Correlation();
