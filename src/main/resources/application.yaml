@@ -55,6 +55,28 @@ outbox:
   maxRetries: 10
 
 ########################################
+# Jackson versioning
+########################################
+jackson:
+  serialization:
+    writeDatesAsTimestamps: false
+    writeDatesWithZoneId: false
+    prettyPrint: false
+    failOnEmptyBeans: true
+  deserialization:
+    failOnUnknownProperties: true
+    acceptEmptyStringAsNull: false
+    acceptSingleValueAsArray: false
+    readUnknownEnumValuesAsNull: false
+  inclusion:
+    value: NON_NULL
+    nullValueHandling: SET
+    content: ALWAYS
+  naming:
+    strategy: LOWER_CAMEL_CASE
+
+
+########################################
 # HTTP versioning for requests
 ########################################
 http:
@@ -117,29 +139,6 @@ info:
     name: Customer Management Service
     description: Customer lifecycle and profile management service
     version: 0.0.1
-
-# Application configuration 
-config:
-  jackson: # Configure the Jackson here 
-    serialization:
-      write-dates-as-timestamps: false
-      write-dates-with-zone-id: false
-      pretty-print: false
-      fail-on-empty-beans: true
-    deserialization:
-      fail-on-unknown-properties: true
-      accept-empty-string-as-null: false
-      accept-single-value-as-array: false
-      read-unknown-enum-values-as-null: false
-    inclusion:
-      value: NON_NULL
-      null-value-handling: SET
-      content: ALWAYS
-    naming:
-      strategy: LOWER_CAMEL_CASE
-
-
-  
 
 # Event configuration (RabbitMQ for now)
 event:

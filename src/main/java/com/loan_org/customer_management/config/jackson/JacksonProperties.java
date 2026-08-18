@@ -1,13 +1,15 @@
 package com.loan_org.customer_management.config.jackson;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.context.annotation.Configuration;
 
 import lombok.Getter;
 import lombok.Setter;
 
 @Getter
 @Setter
-@ConfigurationProperties(prefix = "config.jackson")
+@Configuration
+@ConfigurationProperties(prefix = "jackson")
 public class JacksonProperties {
 
     private Serialization   serialization   = new Serialization();
