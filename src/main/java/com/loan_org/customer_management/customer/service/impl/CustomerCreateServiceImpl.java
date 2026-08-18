@@ -1,12 +1,10 @@
 package com.loan_org.customer_management.customer.service.impl;
 
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import com.loan_org.customer_management.customer.dto.request.CreateCustomerRequest;
 import com.loan_org.customer_management.customer.dto.response.CustomerResponse;
 import com.loan_org.customer_management.customer.entity.CustomerDocument;
-import com.loan_org.customer_management.customer.generator.CustomerNumberGenerator;
 import com.loan_org.customer_management.customer.mapper.CustomerMapper;
 import com.loan_org.customer_management.customer.repository.CustomerRepository;
 import com.loan_org.customer_management.customer.service.CustomerCreateService;
@@ -14,6 +12,7 @@ import com.loan_org.customer_management.customer.validation.AddressValidator;
 import com.loan_org.customer_management.customer.validation.CustomerValidator;
 import com.loan_org.customer_management.customer.validation.IdentificationValidator;
 import com.loan_org.customer_management.event.publisher.CustomerEventPublisher;
+import com.loan_org.customer_management.generator.CustomerNumberGenerator;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -35,11 +34,12 @@ public class CustomerCreateServiceImpl implements CustomerCreateService {
     
     public CustomerResponse create(CreateCustomerRequest request) {
 
-        log.info("Received request to create a new customer with IAM ID: {}", request.getIamUserId());
+        log.info("Received request to CREATE_CUSTOMER for IAM userId: {}. Starting process...", request.getIamUserId());
         customerValidator.validateCreate(request);
 
+        log.info("Completed customer request validation. Now completing insertion...", request);
         CustomerDocument customer = customerMapper.toDocument(request);
-        String newCustomerNumber  = customerNumberGenerator.generate();
+        String newCustomerNumber  = customerNumberGenerator.generate(request);
         customer.setCustomerNumber(newCustomerNumber);
         log.info("Generated a new customer number: {} for IAM ID: {}", newCustomerNumber, request.getIamUserId());
 

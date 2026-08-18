@@ -1,7 +1,7 @@
 package com.loan_org.customer_management.customer.service.impl;
 
-import com.loan_org.customer_management.customer.client.pincode.PincodeLookupResponse;
-import com.loan_org.customer_management.customer.client.pincode.PincodeLookupService;
+import com.loan_org.customer_management.client.pincode.PincodeLookupResponse;
+import com.loan_org.customer_management.client.pincode.PincodeLookupService;
 import com.loan_org.customer_management.customer.dto.request.CreateAddressRequest;
 import com.loan_org.customer_management.customer.dto.request.UpdateAddressRequest;
 import com.loan_org.customer_management.customer.dto.response.AddressResponse;

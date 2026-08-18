@@ -1,4 +1,4 @@
-package com.loan_org.customer_management.customer.client.pincode.impl;
+package com.loan_org.customer_management.client.pincode.impl;
 
 import java.util.List;
 
@@ -6,9 +6,9 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.stereotype.Service;
 
-import com.loan_org.customer_management.customer.client.pincode.PincodeApiResponse;
-import com.loan_org.customer_management.customer.client.pincode.PincodeLookupResponse;
-import com.loan_org.customer_management.customer.client.pincode.PincodeLookupService;
+import com.loan_org.customer_management.client.pincode.PincodeApiResponse;
+import com.loan_org.customer_management.client.pincode.PincodeLookupResponse;
+import com.loan_org.customer_management.client.pincode.PincodeLookupService;
 import com.loan_org.customer_management.http.GenericHttpClient;
 
 import lombok.RequiredArgsConstructor;

@@ -1,4 +1,4 @@
-package com.loan_org.customer_management.customer.client.pincode;
+package com.loan_org.customer_management.client.pincode;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;

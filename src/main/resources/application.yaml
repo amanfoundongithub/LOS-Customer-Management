@@ -127,6 +127,10 @@ requestLogging:
   includeTraceId: true 
   includeDuration: true 
 
+########################################
+# Customer number generator
+########################################
+
 logging:
   level:
     root: INFO

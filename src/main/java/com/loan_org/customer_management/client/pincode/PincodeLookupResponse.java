@@ -1,4 +1,4 @@
-package com.loan_org.customer_management.customer.client.pincode;
+package com.loan_org.customer_management.client.pincode;
 
 import lombok.Builder;
 import lombok.Getter;

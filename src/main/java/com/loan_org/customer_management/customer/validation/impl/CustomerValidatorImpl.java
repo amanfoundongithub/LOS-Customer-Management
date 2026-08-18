@@ -6,6 +6,7 @@ import com.loan_org.customer_management.customer.entity.CustomerDocument;
 import com.loan_org.customer_management.customer.enums.CustomerStatus;
 import com.loan_org.customer_management.customer.repository.CustomerRepository;
 import com.loan_org.customer_management.customer.validation.CustomerValidator;
+import com.loan_org.customer_management.exception.CustomerAlreadyExistsException;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -17,113 +18,54 @@ public class CustomerValidatorImpl implements CustomerValidator{
 
     private final CustomerRepository customerRepository;
 
-    public void validateCreate(
-            CreateCustomerRequest request
-    ) {
-
+    @Override
+    public void validateCreate(CreateCustomerRequest request) {
         if (request == null) {
-            throw new IllegalArgumentException(
-                    "Customer creation request cannot be null"
-            );
+            throw new IllegalArgumentException("Customer creation request cannot be null");
         }
-
         validateIamUser(request.getIamUserId());
-
         validateCustomerType(request);
-
         validateRequiredInformation(request);
     }
 
-    /**
-     * Validates whether customer information can be updated.
-     */
-    public void validateUpdate(
-            CustomerDocument customer,
-            UpdateCustomerRequest request
-    ) {
-
+    public void validateUpdate(CustomerDocument customer, UpdateCustomerRequest request) {
         if (customer == null) {
-            throw new IllegalArgumentException(
-                    "Customer cannot be null"
-            );
+            throw new IllegalArgumentException("Customer cannot be null");
         }
-
         if (request == null) {
-            throw new IllegalArgumentException(
-                    "Update request cannot be null"
-            );
+            throw new IllegalArgumentException("Update request cannot be null");
         }
-
         validateCustomerCanBeUpdated(customer);
     }
 
-    /**
-     * Ensures the IAM user is not already associated
-     * with another customer.
-     */
-    private void validateIamUser(
-            String iamUserId
-    ) {
 
+    private void validateIamUser(String iamUserId) {
         if (!StringUtils.hasText(iamUserId)) {
             return;
         }
-
         if (customerRepository.existsByIamUserId(iamUserId)) {
-
-            throw new IllegalArgumentException(
-                    "IAM user is already associated with a customer"
-            );
+            throw new CustomerAlreadyExistsException("IAM user is already associated with a customer.");
         }
     }
 
-    /**
-     * Ensures the required customer information exists.
-     */
-    private void validateRequiredInformation(
-            CreateCustomerRequest request
-    ) {
-
+    private void validateRequiredInformation(CreateCustomerRequest request) {
         if (request.getPersonalInformation() == null) {
-            throw new IllegalArgumentException(
-                    "Personal information is required"
-            );
+            throw new IllegalArgumentException("Personal information is required");
         }
-
         if (request.getContactInformation() == null) {
-            throw new IllegalArgumentException(
-                    "Contact information is required"
-            );
+            throw new IllegalArgumentException("Contact information is required");
         }
     }
 
-    /**
-     * Ensures customer type is valid.
-     */
-    private void validateCustomerType(
-            CreateCustomerRequest request
-    ) {
-
+    private void validateCustomerType(CreateCustomerRequest request) {
         if (request.getCustomerType() == null) {
-            throw new IllegalArgumentException(
-                    "Customer type is required"
-            );
+            throw new IllegalArgumentException("Customer type is required");
         }
     }
 
-    /**
-     * Determines whether a customer is allowed
-     * to have normal profile information updated.
-     */
-    private void validateCustomerCanBeUpdated(
-            CustomerDocument customer
-    ) {
-
+    private void validateCustomerCanBeUpdated(CustomerDocument customer) {
         if (customer.getStatus() == CustomerStatus.CLOSED) {
-
-            throw new IllegalStateException(
-                    "Closed customers cannot be updated"
-            );
+            throw new IllegalStateException("Closed customers cannot be updated");
         }
     }
 }
