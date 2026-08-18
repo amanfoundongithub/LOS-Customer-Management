@@ -4,19 +4,21 @@ import java.util.Map;
 
 import org.springframework.core.ParameterizedTypeReference;
 
+/**
+ * Generic HTTP Client that connects to the transport http layer and performs
+ * the HTTP operation. The Http client supports the retry as well as header
+ * forwarding operation(s).
+ * 
+ * @author amanfoundongithub
+ * @version 1.0.0
+ * 
+ */
 public interface GenericHttpClient {
+ 
     <T> T get(String url, Class<T> responseType);
     <T> T get(String url, Class<T> responseType, Map<String, String> headers);
-    <T> T get(
-        String url,
-        ParameterizedTypeReference<T> responseType
-);
-
-<T> T get(
-            String url,
-            ParameterizedTypeReference<T> responseType,
-            Map<String, String> headers
-    );
+    <T> T get(String url, ParameterizedTypeReference<T> responseType);
+    <T> T get(String url, ParameterizedTypeReference<T> responseType,Map<String, String> headers);
 
     <R, T> T post(String url, R request, Class<T> responseType);
     <R, T> T post(String url, Map<String, String> headers, R request, Class<T> responseType);
@@ -26,4 +28,5 @@ public interface GenericHttpClient {
 
     void delete(String url);
     void delete(String url, Map<String, String> headers);
+    
 }
