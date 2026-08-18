@@ -1,11 +1,17 @@
 package com.loan_org.customer_management.config.http;
 
-import java.time.Duration;
 
+import org.apache.hc.client5.http.config.RequestConfig;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
+import org.apache.hc.client5.http.impl.classic.HttpClients;
+import org.apache.hc.client5.http.impl.io.PoolingHttpClientConnectionManager;
+import org.apache.hc.client5.http.impl.io.PoolingHttpClientConnectionManagerBuilder;
+import org.apache.hc.core5.util.Timeout;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.client.JdkClientHttpRequestFactory;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.web.client.RestClient;
 
 import lombok.RequiredArgsConstructor;
@@ -18,10 +24,40 @@ public class HttpClientConfig {
     private final HttpClientProperties clientProperties;
 
     @Bean
-    RestClient restClient(RestClient.Builder builder) {
-        JdkClientHttpRequestFactory requestFactory = new JdkClientHttpRequestFactory();
-        requestFactory.setReadTimeout(Duration.ofMillis(clientProperties.getReadTimeoutMs()));
-        return builder.requestFactory(requestFactory).build();
-    }
+    RestClient restClient() {
 
+        RequestConfig requestConfig = RequestConfig.custom()
+                .setConnectTimeout(
+                        Timeout.ofMilliseconds(
+                                clientProperties.getConnectTimeoutMs()
+                        )
+                )
+                .setResponseTimeout(
+                        Timeout.ofMilliseconds(
+                                clientProperties.getReadTimeoutMs()
+                        )
+                )
+                .build();
+
+        PoolingHttpClientConnectionManager connectionManager =
+                PoolingHttpClientConnectionManagerBuilder.create()
+                        .build();
+
+        CloseableHttpClient httpClient =
+                HttpClients.custom()
+                        .setConnectionManager(connectionManager)
+                        .setDefaultRequestConfig(requestConfig)
+                        .build();
+
+        HttpComponentsClientHttpRequestFactory requestFactory =
+                new HttpComponentsClientHttpRequestFactory(httpClient);
+
+        return RestClient.builder()
+                .requestFactory(requestFactory)
+                .defaultHeader(
+                        HttpHeaders.USER_AGENT,
+                        clientProperties.getHeaders().getUserAgent()
+                )
+                .build();
+    }
 }

@@ -22,19 +22,17 @@ public class CustomerFetchServiceImpl implements CustomerFetchService {
     private final CustomerMapper     customerMapper;
 
     @Override
-    @Transactional(readOnly = true)
     public CustomerResponse getCustomerById(String customerId) {
         return customerMapper.toResponse(findCustomerById(customerId));
     }
 
     @Override
-    @Transactional(readOnly = true)
     public CustomerResponse getCustomerByCustomerNumber(String customerNumber) {
         return customerMapper.toResponse(findCustomerByCustomerNumber(customerNumber));
     }
 
     @Override
-    @Transactional
+    
     public CustomerResponse getCustomerByIamUserId(String iamUserId) {
         return customerMapper.toResponse(findByIamUserId(iamUserId));
     }

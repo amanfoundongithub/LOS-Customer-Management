@@ -42,6 +42,6 @@ public class HttpClientProperties {
 
         private String traceHeader = "X-Trace-Id";
 
-        private String userAgent = "customer-management-service";
+        private String userAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36";
     }
 }

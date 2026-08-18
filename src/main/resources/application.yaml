@@ -64,7 +64,7 @@ config:
       propagateTraceId: true
       correlationHeader: X-Correlation-Id
       traceHeader: X-Trace-Id
-      userAgent: customer-management-service
+      userAgent: "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"
   jackson: # Configure the Jackson here 
     serialization:
       write-dates-as-timestamps: false
@@ -154,3 +154,8 @@ api:
   version: v1 
   customer:
     basePath: /api/v1/customers 
+
+# External client configuration
+external:
+  pincode:
+    requestUrl: https://api.postalpincode.in/pincode

@@ -1,5 +1,7 @@
 package com.loan_org.customer_management.customer.service.impl;
 
+import com.loan_org.customer_management.customer.client.pincode.PincodeLookupResponse;
+import com.loan_org.customer_management.customer.client.pincode.PincodeLookupService;
 import com.loan_org.customer_management.customer.dto.request.CreateAddressRequest;
 import com.loan_org.customer_management.customer.dto.request.UpdateAddressRequest;
 import com.loan_org.customer_management.customer.dto.response.AddressResponse;
@@ -21,6 +23,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 @Service
 @Slf4j
@@ -31,10 +34,11 @@ public class AddressServiceImpl implements AddressService {
     private final CustomerMapper     customerMapper;
     private final AddressValidator   addressValidator;
     private final CustomerEventPublisher customerEventPublisher;
+    private final PincodeLookupService   pincodeLookupService;
 
 
     @Override
-    @Transactional
+    
     public AddressResponse addAddress(String customerId, CreateAddressRequest request) {
 
         log.info("Adding new address for customer: {}", customerId);
@@ -44,6 +48,10 @@ public class AddressServiceImpl implements AddressService {
         validateCustomerCanBeModified(customer);
 
         Address address = customerMapper.toAddress(request);
+        if(address.getAddressId() == null) {
+            address.setAddressId(UUID.randomUUID().toString());
+        }
+        enrichAddressWithPincode(address);
 
         log.info("Now validating address...");
         addressValidator.validateAddress(address);
@@ -69,7 +77,6 @@ public class AddressServiceImpl implements AddressService {
     }
 
     @Override
-    @Transactional(readOnly = true)
     public List<AddressResponse> getAddresses(String customerId) {
         CustomerDocument customer = findCustomer(customerId);
         return getOrInitializeAddresses(customer)
@@ -79,7 +86,6 @@ public class AddressServiceImpl implements AddressService {
     }
 
     @Override
-    @Transactional(readOnly = true)
     public AddressResponse getAddress(String customerId, String addressId) {
         CustomerDocument customer = findCustomer(customerId);
         Address address = findAddress(customer, addressId);
@@ -88,7 +94,7 @@ public class AddressServiceImpl implements AddressService {
 
 
     @Override
-    @Transactional
+    
     public AddressResponse updateAddress(String customerId, String addressId, UpdateAddressRequest request) {
 
         log.info("Received request to update address for: {}", customerId);
@@ -121,7 +127,7 @@ public class AddressServiceImpl implements AddressService {
     }
 
     @Override
-    @Transactional
+    
     public void deleteAddress(String customerId, String addressId) {
         CustomerDocument customer = findCustomer(customerId);
         validateCustomerCanBeModified(customer);
@@ -139,7 +145,6 @@ public class AddressServiceImpl implements AddressService {
 
 
     @Override
-    @Transactional
     public void setPrimaryAddress(String customerId, String addressId) {
         CustomerDocument customer = findCustomer(customerId);
         validateCustomerCanBeModified(customer);
@@ -167,6 +172,7 @@ public class AddressServiceImpl implements AddressService {
         return getOrInitializeAddresses(customer)
                 .stream()
                 .filter(address ->
+                        address.getAddressId() != null &&
                         address.getAddressId()
                                 .equals(addressId)
                 )
@@ -263,6 +269,20 @@ public class AddressServiceImpl implements AddressService {
         }
         if (customer.getStatus().equals(CustomerStatus.CLOSED)) {
             throw new InvalidAddressException("Addresses cannot be modified for a closed customer");
+        }
+    }
+
+    private void enrichAddressWithPincode(Address address) {
+        try{
+            PincodeLookupResponse lookupResponse = pincodeLookupService.lookup(address.getPostalCode());
+            log.info("Lookup: {}",lookupResponse.getPostOffices());
+            PincodeLookupResponse.PostOffice firstResponse = lookupResponse.getPostOffices().get(0);
+            address.setCity(firstResponse.getName());
+            address.setDistrict(firstResponse.getDistrict());
+            address.setState(firstResponse.getState());
+            address.setCountry(firstResponse.getCountry());
+        } catch(Exception e) {
+            log.warn(e.getLocalizedMessage());
         }
     }
 }

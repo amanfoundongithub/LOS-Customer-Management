@@ -25,7 +25,7 @@ public class CustomerLifecycleServiceImpl
     private final CustomerEventPublisher customerEventPublisher;
 
     @Override
-    @Transactional
+    
     public CustomerResponse activateCustomer(String customerId) {
 
         return changeStatus(
@@ -35,7 +35,7 @@ public class CustomerLifecycleServiceImpl
     }
 
     @Override
-    @Transactional
+    
     public CustomerResponse suspendCustomer(String customerId) {
 
         return changeStatus(
@@ -45,7 +45,7 @@ public class CustomerLifecycleServiceImpl
     }
 
     @Override
-    @Transactional
+    
     public CustomerResponse deactivateCustomer(String customerId) {
 
         return changeStatus(
@@ -55,7 +55,7 @@ public class CustomerLifecycleServiceImpl
     }
 
     @Override
-    @Transactional
+    
     public CustomerResponse closeCustomer(String customerId) {
 
         return changeStatus(

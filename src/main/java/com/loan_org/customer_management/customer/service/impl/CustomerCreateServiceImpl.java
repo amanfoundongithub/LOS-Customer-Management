@@ -32,7 +32,7 @@ public class CustomerCreateServiceImpl implements CustomerCreateService {
     private final CustomerEventPublisher  customerEventPublisher;
 
     @Override
-    @Transactional
+    
     public CustomerResponse create(CreateCustomerRequest request) {
 
         log.info("Received request to create a new customer with IAM ID: {}", request.getIamUserId());
@@ -40,6 +40,7 @@ public class CustomerCreateServiceImpl implements CustomerCreateService {
 
         CustomerDocument customer = customerMapper.toDocument(request);
         String newCustomerNumber  = customerNumberGenerator.generate();
+        customer.setCustomerNumber(newCustomerNumber);
         log.info("Generated a new customer number: {} for IAM ID: {}", newCustomerNumber, request.getIamUserId());
 
         addressValidator.validatePrimaryAddress(customer.getAddresses());

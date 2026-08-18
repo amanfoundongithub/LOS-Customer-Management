@@ -25,7 +25,7 @@ public class CustomerUpdateServiceImpl implements CustomerUpdateService {
     private final CustomerMapper     customerMapper;
 
     @Override
-    @Transactional
+    
     public CustomerResponse updateCustomer(String customerNumber, UpdateCustomerRequest request) {
         log.info("Received request to update customer info for customer with cn: {}", customerNumber);
         CustomerDocument fetchedCustomer = findCustomerByCustomerNumber(customerNumber);
