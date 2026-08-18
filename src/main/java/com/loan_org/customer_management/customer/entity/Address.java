@@ -1,6 +1,8 @@
 package com.loan_org.customer_management.customer.entity;
 
 import com.loan_org.customer_management.customer.enums.AddressType;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.*;
@@ -12,18 +14,14 @@ import lombok.*;
 @AllArgsConstructor
 public class Address {
 
-    /**
-     * Internal address identifier.
-     *
-     * Example:
-     * ADDR-000001
-     */
     @Size(max = 50)
     private String addressId;
 
+    @NotNull
     private AddressType type;
 
-    @Size(min = 1, max = 200)
+    @NotBlank
+    @Size(max = 200)
     private String addressLine1;
 
     @Size(max = 200)
@@ -32,12 +30,14 @@ public class Address {
     @Size(max = 100)
     private String landmark;
 
+    @NotBlank
     @Size(max = 100)
     private String city;
 
     @Size(max = 100)
     private String district;
 
+    @NotBlank
     @Size(max = 100)
     private String state;
 
@@ -47,6 +47,7 @@ public class Address {
     )
     private String postalCode;
 
+    @NotBlank
     @Size(max = 100)
     private String country;
 
