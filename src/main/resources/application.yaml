@@ -34,19 +34,6 @@ customer-management:
   customer-number:
     prefix: CUST
     length: 10
-rabbitmq:
-  customer:
-    exchange: los.customer.exchange
-    routing-keys:
-      customer-created: customer.created
-      customer-updated: customer.updated
-      customer-status-changed: customer.status.changed
-      customer-address-changed: customer.address.changed
-      customer-identification-changed: customer.identification.changed
-  outbox:
-    poll-interval-ms: ${OUTBOX_POLL_INTERVAL_MS:2000}
-    batch-size: ${OUTBOX_BATCH_SIZE:50}
-    max-retries: ${OUTBOX_MAX_RETRIES:10}
 
 logging:
   level:
@@ -157,6 +144,6 @@ event:
 
 # Outbox configuration
 outbox:
-  poll-interval-ms: ${OUTBOX_POLL_INTERVAL_MS:2000}
-  batch-size: ${OUTBOX_BATCH_SIZE:50}
-  max-retries: ${OUTBOX_MAX_RETRIES:10}
+  pollIntervalMs: ${OUTBOX_POLL_INTERVAL_MS:2000}
+  batchSize: ${OUTBOX_BATCH_SIZE:50}
+  maxRetries: ${OUTBOX_MAX_RETRIES:10}

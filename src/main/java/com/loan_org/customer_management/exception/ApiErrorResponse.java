@@ -1,4 +1,4 @@
-package com.loan_org.customer_management.dto.response;
+package com.loan_org.customer_management.exception;
 
 import lombok.Builder;
 import lombok.Getter;
