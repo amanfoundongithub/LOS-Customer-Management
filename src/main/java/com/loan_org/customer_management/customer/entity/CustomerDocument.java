@@ -43,18 +43,9 @@ public class CustomerDocument {
     @Id
     private String id;
 
-    /**
-     * MongoDB optimistic locking version.
-     */
     @Version
     private Long version;
 
-    /**
-     * Business-facing customer identifier.
-     *
-     * Example:
-     * CUST-00000001
-     */
     @NotBlank
     @Size(max = 30)
     @Pattern(
@@ -64,81 +55,45 @@ public class CustomerDocument {
     @Indexed(unique = true)
     private String customerNumber;
 
-    /**
-     * Reference to the user managed by IAM.
-     *
-     * IAM owns authentication and authorization.
-     * Customer Management owns the customer profile.
-     */
     @Size(max = 100)
     @Indexed(unique = true, sparse = true)
     private String iamUserId;
 
-    /**
-     * Customer personal information.
-     */
     @Valid
     @NotNull
     private PersonalInformation personalInformation;
 
-    /**
-     * Customer contact information.
-     */
     @Valid
     @NotNull
     private ContactInformation contactInformation;
 
-    /**
-     * Customer addresses.
-     */
     @Valid
     @Builder.Default
     @Size(max = 10)
     private List<Address> addresses = new ArrayList<>();
 
-    /**
-     * Customer identification records.
-     */
     @Valid
     @Builder.Default
     @Size(max = 10)
     private List<Identification> identifications = new ArrayList<>();
 
-    /**
-     * Customer type.
-     */
     @NotNull
     @Builder.Default
     private CustomerType customerType = CustomerType.INDIVIDUAL;
 
-    /**
-     * Customer lifecycle status.
-     */
     @NotNull
     @Builder.Default
     private CustomerStatus status = CustomerStatus.PROSPECT;
 
-    /**
-     * Customer communication preferences.
-     */
     @Valid
     private CustomerPreferences preferences;
 
-    /**
-     * Flexible customer-specific attributes.
-     *
-     * Business-critical fields should not be stored here.
-     */
     @Builder.Default
     @Size(max = 50)
     private Map<
             @Size(max = 50) String,
             @Size(max = 500) String
             > attributes = new HashMap<>();
-
-    // -------------------------------------------------------------------------
-    // Audit fields
-    // -------------------------------------------------------------------------
 
     @CreatedDate
     private Instant createdAt;
