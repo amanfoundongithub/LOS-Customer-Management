@@ -1,4 +1,4 @@
-package com.loan_org.customer_management.config.outbox;
+package com.loan_org.customer_management.outbox;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
