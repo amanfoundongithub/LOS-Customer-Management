@@ -27,10 +27,54 @@ spring:
         concurrency: 1
         max-concurrency: 5
   
+########################################
+# Server startup.
+# This is the code block to start the server.
+########################################
 server:
-  port: ${SERVER_PORT:8083}
+  port: 8083
   servlet:
     context-path: /customer-management
+
+########################################
+# API versioning: This section contains the versioning
+# for the API. Also, there are some other contents related
+# to the API. 
+########################################
+api:
+  version: v1 
+  customer:
+    basePath: /api/${api.version}/customers
+
+########################################
+# Outbox versioning
+########################################
+outbox:
+  pollIntervalMs: 2000
+  batchSize: 50
+  maxRetries: 10
+
+########################################
+# HTTP versioning for requests
+########################################
+http:
+  enabled: true 
+  connectTimeoutMs: 3000
+  readTimeoutMs: 5000
+  retry:
+    enabled: true 
+    maxAttempts: 3
+    initialIntervalMs: 500
+    multiplier: 2
+    maxIntervalMs: 5000
+  headers:
+    propagateCorrelationId: true 
+    propagateTraceId: true
+    correlationHeader: X-Correlation-Id
+    traceHeader: X-Trace-Id
+    userAgent: "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"
+
+
 
 logging:
   level:
@@ -47,24 +91,6 @@ info:
 
 # Application configuration 
 config:
-  http: # HTTP configuration here
-    enabled: true 
-    connectTimeoutMs: 3000
-    readTimeoutMs: 5000
-    writeTimeoutMs: 5000
-    maxInMemorySizeMb: 10
-    retry:
-      enabled: true 
-      maxAttempts: 3
-      initialIntervalMs: 500
-      multiplier: 2
-      maxIntervalMs: 5000
-    headers:
-      propagateCorrelationId: true 
-      propagateTraceId: true
-      correlationHeader: X-Correlation-Id
-      traceHeader: X-Trace-Id
-      userAgent: "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"
   jackson: # Configure the Jackson here 
     serialization:
       write-dates-as-timestamps: false
@@ -143,17 +169,7 @@ event:
       dead-letter-exchange: customer.events.dlx
       dead-letter-queue: customer.events.dlq
 
-# Outbox configuration
-outbox:
-  pollIntervalMs: ${OUTBOX_POLL_INTERVAL_MS:2000}
-  batchSize: ${OUTBOX_BATCH_SIZE:50}
-  maxRetries: ${OUTBOX_MAX_RETRIES:10}
-
 # API configuration
-api:
-  version: v1 
-  customer:
-    basePath: /api/v1/customers 
 
 # External client configuration
 external:

@@ -1,15 +1,17 @@
 package com.loan_org.customer_management.config.outbox;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.context.annotation.Configuration;
 
 import lombok.Getter;
 import lombok.Setter;
 
 @Getter
 @Setter
+@Configuration
 @ConfigurationProperties(prefix = "outbox")
 public class OutboxProperties {
-    private int batchSize = 50;
-    private long pollIntervalMs = 2000;
-    private int maxRetries = 10;
+    private int  batchSize;
+    private long pollIntervalMs;
+    private int  maxRetries;
 }

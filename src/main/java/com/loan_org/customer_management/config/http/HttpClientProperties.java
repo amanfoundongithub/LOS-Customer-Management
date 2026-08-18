@@ -6,42 +6,32 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 
 @Getter
 @Setter
-@ConfigurationProperties(prefix = "application.http-client")
+@ConfigurationProperties(prefix = "http")
 public class HttpClientProperties {
 
-    private boolean enabled = true;
-    private int connectTimeoutMs = 5000;
-    private int readTimeoutMs = 10000;
-    private Retry retry = new Retry();
+    private boolean enabled;
+    private int     connectTimeoutMs;
+    private int     readTimeoutMs;
+    private Retry   retry = new Retry();
     private Headers headers = new Headers();
 
     @Getter
     @Setter
     public static class Retry {
-
-        private boolean enabled = true;
-
-        private int maxAttempts = 3;
-
-        private long initialDelayMs = 500;
-
-        private double multiplier = 2.0;
-
-        private long maxDelayMs = 5000;
+        private boolean enabled;
+        private int     maxAttempts;
+        private long    initialDelayMs;
+        private double  multiplier;
+        private long    maxDelayMs;
     }
 
     @Getter
     @Setter
     public static class Headers {
-
-        private boolean propagateCorrelationId = true;
-
-        private boolean propagateTraceId = true;
-
-        private String correlationHeader = "X-Correlation-Id";
-
-        private String traceHeader = "X-Trace-Id";
-
-        private String userAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36";
+        private boolean propagateCorrelationId;
+        private boolean propagateTraceId;
+        private String  correlationHeader;
+        private String  traceHeader;
+        private String  userAgent;
     }
 }
