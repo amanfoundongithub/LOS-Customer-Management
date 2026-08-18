@@ -1,6 +1,7 @@
 package com.loan_org.customer_management.customer.entity;
 
 import com.loan_org.customer_management.customer.enums.Gender;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Past;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
@@ -15,7 +16,8 @@ import java.time.LocalDate;
 @AllArgsConstructor
 public class PersonalInformation {
 
-    @Size(min = 1, max = 50)
+    @NotBlank(message = "First name is required")
+    @Size(max = 50)
     @Pattern(
             regexp = "^[\\p{L} .'-]+$",
             message = "First name contains invalid characters"
@@ -29,7 +31,8 @@ public class PersonalInformation {
     )
     private String middleName;
 
-    @Size(min = 1, max = 50)
+    @NotBlank(message = "Last name is required")
+    @Size(max = 50)
     @Pattern(
             regexp = "^[\\p{L} .'-]+$",
             message = "Last name contains invalid characters"
@@ -41,14 +44,6 @@ public class PersonalInformation {
 
     private Gender gender;
 
-    /**
-     * ISO-style country code.
-     *
-     * Examples:
-     * IN
-     * US
-     * GB
-     */
     @Size(min = 2, max = 3)
     @Pattern(
             regexp = "^[A-Za-z]{2,3}$",
