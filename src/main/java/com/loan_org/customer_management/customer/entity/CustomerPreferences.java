@@ -1,5 +1,7 @@
 package com.loan_org.customer_management.customer.entity;
 
+import com.loan_org.customer_management.customer.enums.CommunicationChannel;
+
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.*;
@@ -28,7 +30,7 @@ public class CustomerPreferences {
      */
     @Size(max = 10)
     @Pattern(
-            regexp = "^[A-Za-z]{2,10}$",
+            regexp = "^[A-Za-z]{2,3}(-[A-Za-z]{2,4})?$",
             message = "Invalid preferred language"
     )
     private String preferredLanguage;
@@ -40,5 +42,5 @@ public class CustomerPreferences {
      * PHONE
      */
     @Size(max = 30)
-    private String preferredCommunicationChannel;
+    private CommunicationChannel preferredCommunicationChannel;
 }
