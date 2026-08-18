@@ -101,12 +101,6 @@ config:
     includeTraceId: true 
     includeDuration: true 
 
-# API configuration
-api:
-  version: v1 
-  customer:
-    basePath: /api/v1/customers 
-
 # Event configuration (RabbitMQ for now)
 event:
   rabbitmq:
@@ -147,3 +141,9 @@ outbox:
   pollIntervalMs: ${OUTBOX_POLL_INTERVAL_MS:2000}
   batchSize: ${OUTBOX_BATCH_SIZE:50}
   maxRetries: ${OUTBOX_MAX_RETRIES:10}
+
+# API configuration
+api:
+  version: v1 
+  customer:
+    basePath: /api/v1/customers 
