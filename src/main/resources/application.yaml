@@ -95,6 +95,16 @@ mdc:
   validation:
     maxIdLength: 128
 
+########################################
+# Request logging filter configuration
+########################################
+requestLogging: 
+  enabled: true 
+  includeQueryString: true 
+  includeCorrelationId: true 
+  includeTraceId: true 
+  includeDuration: true 
+
 logging:
   level:
     root: INFO
@@ -128,30 +138,8 @@ config:
     naming:
       strategy: LOWER_CAMEL_CASE
 
-filter:
-  mdc: # MDC configuration
-    enabled: true 
-    correlation:
-      header: X-Correlation-Id 
-      mdcKey: correlationId 
-      acceptIncoming: true 
-      generateIfMissing: true
-    trace:
-      header: X-Trace-Id 
-      mdcKey: traceId 
-      acceptIncoming: true 
-      generateIfMissing: true
-    response:
-      includeCorrelationId: true 
-      includeTraceId: true
-    validation:
-      maxIdLength: 128
-  request-logging: # Request logging configuration
-    enabled: true 
-    includeQueryString: true 
-    includeCorrelationId: true 
-    includeTraceId: true 
-    includeDuration: true 
+
+  
 
 # Event configuration (RabbitMQ for now)
 event:
