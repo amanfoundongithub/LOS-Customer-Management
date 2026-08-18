@@ -2,6 +2,9 @@ package com.loan_org.customer_management.outbox.publisher;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.loan_org.customer_management.config.event.RabbitMQProperties;
+import com.loan_org.customer_management.config.mdc.MdcProperties;
+import com.loan_org.customer_management.config.outbox.OutboxProperties;
 import com.loan_org.customer_management.outbox.entity.OutboxEventDocument;
 import com.loan_org.customer_management.outbox.entity.OutboxEventStatus;
 import com.loan_org.customer_management.outbox.repository.OutboxEventRepository;
@@ -10,9 +13,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.MDC;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
@@ -25,41 +26,27 @@ import java.util.List;
 public class OutboxEventPublisher {
 
     private final OutboxEventRepository outboxEventRepository;
-
     private final OutboxService outboxService;
-
     private final RabbitTemplate rabbitTemplate;
-
     private final ObjectMapper objectMapper;
+    private final MdcProperties mdcProperties;
+    private final RabbitMQProperties rabbitMQProperties;
+    private final OutboxProperties outboxProperties;
 
-    @Value("${rabbitmq.outbox.batch-size:50}")
-    private int batchSize;
-
-
-    /**
-     * Poll MongoDB for pending outbox events.
-     *
-     * Runs every 2 seconds by default.
-     */
     @Scheduled(
-            fixedDelayString =
-                    "${rabbitmq.outbox.poll-interval-ms:2000}"
+            fixedDelayString = "#{@outboxProperties.pollIntervalMs}"
     )
     public void publishPendingEvents() {
 
         List<OutboxEventDocument> events =
-                outboxEventRepository
-                        .findByStatusOrderByCreatedAtAsc(
-                                OutboxEventStatus.PENDING,
-                                PageRequest.of(
-                                        0,
-                                        batchSize,
-                                        Sort.by(
-                                                Sort.Direction.ASC,
-                                                "createdAt"
-                                        )
-                                )
-                        );
+                outboxEventRepository.findEligibleEvents(
+                        OutboxEventStatus.PENDING,
+                        Instant.now(),
+                        PageRequest.of(
+                                0,
+                                outboxProperties.getBatchSize()
+                        )
+                );
 
         if (events.isEmpty()) {
             return;
@@ -71,20 +58,15 @@ public class OutboxEventPublisher {
         );
 
         for (OutboxEventDocument event : events) {
-
             publishEvent(event);
         }
     }
-
 
     private void publishEvent(
             OutboxEventDocument event
     ) {
 
-        event.setLastAttemptAt(
-                Instant.now()
-        );
-
+        event.setLastAttemptAt(Instant.now());
         event.setRetryCount(
                 event.getRetryCount() + 1
         );
@@ -98,39 +80,17 @@ public class OutboxEventPublisher {
                             event.getPayload()
                     );
 
-            String correlationId =
-                    payload.has("correlationId")
-                            ? payload.get("correlationId").asText()
-                            : null;
-
-            String traceId =
-                    payload.has("traceId")
-                            ? payload.get("traceId").asText()
-                            : null;
-
-            if (correlationId != null) {
-                MDC.put(
-                        "correlationId",
-                        correlationId
-                );
-            }
-
-            if (traceId != null) {
-                MDC.put(
-                        "traceId",
-                        traceId
-                );
-            }
+            setMdcFromPayload(payload);
 
             rabbitTemplate.convertAndSend(
-                    "los.customer.exchange",
+                    rabbitMQProperties
+                            .getExchange()
+                            .getName(),
                     event.getRoutingKey(),
                     payload
             );
 
-            outboxService.markPublished(
-                    event
-            );
+            outboxService.markPublished(event);
 
             log.info(
                     "Outbox event published | eventId={} eventType={} aggregateId={} routingKey={}",
@@ -151,36 +111,53 @@ public class OutboxEventPublisher {
                     exception
             );
 
-            /*
-             * Put it back into PENDING so the next poll
-             * will retry it.
-             */
-            event.setStatus(
-                    OutboxEventStatus.PENDING
-            );
-
             outboxService.markFailed(
                     event,
                     exception
             );
 
-            /*
-             * markFailed sets FAILED.
-             *
-             * We deliberately change it back to PENDING
-             * here because transient RabbitMQ failures
-             * should automatically retry.
-             */
-            event.setStatus(
-                    OutboxEventStatus.PENDING
-            );
-
-            outboxEventRepository.save(event);
-
         } finally {
 
-            MDC.remove("correlationId");
-            MDC.remove("traceId");
+            MDC.remove(
+                    mdcProperties
+                            .getCorrelation()
+                            .getMdcKey()
+            );
+
+            MDC.remove(
+                    mdcProperties
+                            .getTrace()
+                            .getMdcKey()
+            );
+        }
+    }
+
+    private void setMdcFromPayload(
+            JsonNode payload
+    ) {
+
+        String correlationKey =
+                mdcProperties
+                        .getCorrelation()
+                        .getMdcKey();
+
+        String traceKey =
+                mdcProperties
+                        .getTrace()
+                        .getMdcKey();
+
+        if (payload.hasNonNull(correlationKey)) {
+            MDC.put(
+                    correlationKey,
+                    payload.get(correlationKey).asText()
+            );
+        }
+
+        if (payload.hasNonNull(traceKey)) {
+            MDC.put(
+                    traceKey,
+                    payload.get(traceKey).asText()
+            );
         }
     }
 }

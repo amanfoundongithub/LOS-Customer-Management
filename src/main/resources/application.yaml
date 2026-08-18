@@ -154,3 +154,9 @@ event:
       dead-letter-enabled: true
       dead-letter-exchange: customer.events.dlx
       dead-letter-queue: customer.events.dlq
+
+# Outbox configuration
+outbox:
+  poll-interval-ms: ${OUTBOX_POLL_INTERVAL_MS:2000}
+  batch-size: ${OUTBOX_BATCH_SIZE:50}
+  max-retries: ${OUTBOX_MAX_RETRIES:10}

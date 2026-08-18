@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
 import com.loan_org.customer_management.dto.response.ApiErrorResponse;
-import com.loan_org.customer_management.filter.MdcHeaderFilter;
 
 import java.time.Instant;
 import java.util.LinkedHashMap;
@@ -281,10 +280,10 @@ public class GlobalExceptionHandler {
     ) {
 
         String traceId =
-                MDC.get(MdcHeaderFilter.TRACE_ID);
+                MDC.get("abcd");
 
         if (traceId == null || traceId.isBlank()) {
-            traceId = MDC.get(MdcHeaderFilter.CORRELATION_ID);
+            traceId = MDC.get("abcd");
         }
 
         ApiErrorResponse response =
