@@ -20,85 +20,45 @@ import java.time.Instant;
 @NoArgsConstructor
 @AllArgsConstructor
 @Document(collection = "outbox_events")
-@CompoundIndex(
-        name = "outbox_status_created_idx",
-        def = "{'status': 1, 'createdAt': 1}"
-)
+@CompoundIndex(name = "outbox_status_created_idx", def = "{'status': 1, 'createdAt': 1}")
 public class OutboxEventDocument {
 
     @Id
     private String id;
 
-    /**
-     * Globally unique identifier for this event.
-     */
     @Indexed(unique = true)
     private String eventId;
 
-    /**
-     * Example:
-     *
-     * CUSTOMER_CREATED
-     * CUSTOMER_UPDATED
-     * CUSTOMER_STATUS_CHANGED
-     */
-    @Indexed
-    private String eventType;
-
-    /**
-     * Example:
-     *
-     * CUSTOMER
-     * CUSTOMER_ADDRESS
-     * CUSTOMER_IDENTIFICATION
-     */
-    private String aggregateType;
-
-    /**
-     * ID of the entity that caused this event.
-     */
     @Indexed
     private String aggregateId;
 
-    /**
-     * RabbitMQ routing key.
-     *
-     * Example:
-     * customer.created
-     */
+    @Indexed
+    private String eventType;
+
+    private int eventVersion;
+
+    private String aggregateType;
+
     private String routingKey;
 
-    /**
-     * Serialized JSON event payload.
-     */
+    private String contentType;
+
     private String payload;
 
-    /**
-     * Current publishing state.
-     */
+    @Builder.Default
     @Indexed
-    private OutboxEventStatus status;
+    private OutboxEventStatus status = OutboxEventStatus.PENDING;
 
-    /**
-     * Number of times publishing was attempted.
-     */
     private int retryCount;
 
-    /**
-     * Last error returned while publishing.
-     */
     private String lastError;
 
-    /**
-     * Time of the last publish attempt.
-     */
     private Instant lastAttemptAt;
 
-    /**
-     * Time at which RabbitMQ successfully accepted
-     * the event.
-     */
     private Instant publishedAt;
+
+    @Indexed
+    private Instant nextAttemptAt;
 
     @CreatedDate
     @Indexed
@@ -106,4 +66,5 @@ public class OutboxEventDocument {
 
     @LastModifiedDate
     private Instant updatedAt;
+
 }
