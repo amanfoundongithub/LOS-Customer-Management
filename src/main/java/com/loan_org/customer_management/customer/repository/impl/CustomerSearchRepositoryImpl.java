@@ -21,8 +21,7 @@ import java.util.regex.Pattern;
 
 @Repository
 @RequiredArgsConstructor
-public class CustomerSearchRepositoryImpl
-        implements CustomerSearchRepository {
+public class CustomerSearchRepositoryImpl implements CustomerSearchRepository {
 
     private final MongoTemplate mongoTemplate;
 
@@ -33,76 +32,28 @@ public class CustomerSearchRepositoryImpl
             CustomerType customerType,
             Instant createdFrom,
             Instant createdTo,
-            Pageable pageable) {
+            Pageable pageable
+    ) {
 
         Query query = new Query();
 
-        List<Criteria> criteriaList = new ArrayList<>();
+        List<Criteria> filters = new ArrayList<>();
 
-        if (StringUtils.hasText(search)) {
+        addSearchCriteria(filters, search);
+        addStatusCriteria(filters, status);
+        addCustomerTypeCriteria(filters, customerType);
+        addDateRangeCriteria(filters, createdFrom, createdTo);
 
-            String normalizedSearch = search.trim();
-
-            String escapedSearch =
-                    Pattern.quote(normalizedSearch);
-
-            Criteria searchCriteria = new Criteria().orOperator(
-                    Criteria.where("customerNumber")
-                            .regex(escapedSearch, "i"),
-
-                    Criteria.where("iamUserId")
-                            .regex(escapedSearch, "i"),
-
-                    Criteria.where("personalInformation.firstName")
-                            .regex(escapedSearch, "i"),
-
-                    Criteria.where("personalInformation.lastName")
-                            .regex(escapedSearch, "i"),
-
-                    Criteria.where("contactInformation.email")
-                            .regex(escapedSearch, "i"),
-
-                    Criteria.where("contactInformation.mobileNumber")
-                            .regex(escapedSearch, "i")
-            );
-
-            criteriaList.add(searchCriteria);
-        }
-
-        if (status != null) {
-            criteriaList.add(
-                    Criteria.where("status").is(status)
-            );
-        }
-
-        if (customerType != null) {
-            criteriaList.add(
-                    Criteria.where("customerType").is(customerType)
-            );
-        }
-
-        if (createdFrom != null) {
-            criteriaList.add(
-                    Criteria.where("createdAt").gte(createdFrom)
-            );
-        }
-
-        if (createdTo != null) {
-            criteriaList.add(
-                    Criteria.where("createdAt").lte(createdTo)
-            );
-        }
-
-        if (!criteriaList.isEmpty()) {
+        if (!filters.isEmpty()) {
             query.addCriteria(
                     new Criteria().andOperator(
-                            criteriaList.toArray(new Criteria[0])
+                            filters.toArray(new Criteria[0])
                     )
             );
         }
 
         long total = mongoTemplate.count(
-                Query.of(query),
+                Query.of(query).limit(-1).skip(-1),
                 CustomerDocument.class
         );
 
@@ -119,5 +70,78 @@ public class CustomerSearchRepositoryImpl
                 pageable,
                 total
         );
+    }
+
+    private void addSearchCriteria(
+            List<Criteria> filters,
+            String search
+    ) {
+
+        if (!StringUtils.hasText(search)) {
+            return;
+        }
+
+        String escapedSearch =
+                Pattern.quote(search.trim());
+
+        filters.add(
+                new Criteria().orOperator(
+                        Criteria.where("customerNumber")
+                                .regex(escapedSearch, "i"),
+                        Criteria.where("iamUserId")
+                                .regex(escapedSearch, "i"),
+                        Criteria.where("personalInformation.firstName")
+                                .regex(escapedSearch, "i"),
+                        Criteria.where("personalInformation.lastName")
+                                .regex(escapedSearch, "i"),
+                        Criteria.where("contactInformation.email")
+                                .regex(escapedSearch, "i"),
+                        Criteria.where("contactInformation.mobileNumber")
+                                .regex(escapedSearch, "i")
+                )
+        );
+    }
+
+    private void addStatusCriteria(
+            List<Criteria> filters,
+            CustomerStatus status
+    ) {
+
+        if (status != null) {
+            filters.add(
+                    Criteria.where("status").is(status)
+            );
+        }
+    }
+
+    private void addCustomerTypeCriteria(
+            List<Criteria> filters,
+            CustomerType customerType
+    ) {
+
+        if (customerType != null) {
+            filters.add(
+                    Criteria.where("customerType").is(customerType)
+            );
+        }
+    }
+
+    private void addDateRangeCriteria(
+            List<Criteria> filters,
+            Instant createdFrom,
+            Instant createdTo
+    ) {
+
+        if (createdFrom != null) {
+            filters.add(
+                    Criteria.where("createdAt").gte(createdFrom)
+            );
+        }
+
+        if (createdTo != null) {
+            filters.add(
+                    Criteria.where("createdAt").lte(createdTo)
+            );
+        }
     }
 }
