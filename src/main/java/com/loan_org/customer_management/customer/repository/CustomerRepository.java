@@ -5,18 +5,9 @@ import org.springframework.data.mongodb.repository.MongoRepository;
 
 import java.util.Optional;
 
-public interface CustomerRepository
-        extends MongoRepository<CustomerDocument, String>,
-        CustomerSearchRepository {
-    Optional<CustomerDocument> findByCustomerNumber(
-            String customerNumber);
-
-    Optional<CustomerDocument> findByIamUserId(
-            String iamUserId);
-
-    boolean existsByCustomerNumber(
-            String customerNumber);
-
-    boolean existsByIamUserId(
-            String iamUserId);
+public interface CustomerRepository extends MongoRepository<CustomerDocument, String>, CustomerSearchRepository {
+    Optional<CustomerDocument> findByCustomerNumber(String customerNumber);
+    Optional<CustomerDocument> findByIamUserId(String iamUserId);
+    boolean existsByCustomerNumber(String customerNumber);
+    boolean existsByIamUserId(String iamUserId);
 }
