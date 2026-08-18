@@ -5,7 +5,7 @@ import com.loan_org.customer_management.customer.dto.response.IdentificationResp
 
 import java.util.List;
 
-public interface CustomerIdentificationService {
+public interface IdentificationService {
 
     IdentificationResponse addIdentification(
             String customerId,

@@ -1,4 +1,4 @@
-package com.loan_org.customer_management.customer.serviceImpl;
+package com.loan_org.customer_management.customer.service.impl;
 
 import com.loan_org.customer_management.customer.dto.response.CustomerResponse;
 import com.loan_org.customer_management.customer.entity.CustomerDocument;
