@@ -1,5 +1,7 @@
 package com.loan_org.customer_management.customer.dto.response;
 
+import com.loan_org.customer_management.customer.enums.CommunicationChannel;
+
 import lombok.*;
 
 @Getter
@@ -17,5 +19,5 @@ public class CustomerPreferencesResponse {
 
     private String preferredLanguage;
 
-    private String preferredCommunicationChannel;
+    private CommunicationChannel preferredCommunicationChannel;
 }

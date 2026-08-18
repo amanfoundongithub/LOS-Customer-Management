@@ -1,5 +1,7 @@
 package com.loan_org.customer_management.customer.dto.request;
 
+import com.loan_org.customer_management.customer.enums.CommunicationChannel;
+
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.*;
@@ -24,6 +26,5 @@ public class UpdatePreferencesRequest {
     )
     private String preferredLanguage;
 
-    @Size(max = 30)
-    private String preferredCommunicationChannel;
+    private CommunicationChannel preferredCommunicationChannel;
 }
