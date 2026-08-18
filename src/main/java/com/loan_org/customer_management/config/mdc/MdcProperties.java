@@ -1,15 +1,17 @@
 package com.loan_org.customer_management.config.mdc;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.context.annotation.Configuration;
 
 import lombok.Getter;
 import lombok.Setter;
 
 @Getter
 @Setter
-@ConfigurationProperties(prefix = "filter.mdc")
+@Configuration
+@ConfigurationProperties(prefix = "mdc")
 public class MdcProperties {
-    private boolean enabled = true;
+    private boolean enabled;
     private Correlation correlation = new Correlation();
     private Trace trace = new Trace();
     private Response response = new Response();
@@ -18,31 +20,31 @@ public class MdcProperties {
     @Getter
     @Setter
     public static class Correlation {
-        private String header = "X-Correlation-Id";
-        private String mdcKey = "correlationId";
-        private boolean acceptIncoming = true;
-        private boolean generateIfMissing = true;
+        private String header;
+        private String mdcKey;
+        private boolean acceptIncoming;
+        private boolean generateIfMissing;
     }
 
     @Getter
     @Setter
     public static class Trace {
-        private String header = "X-Trace-Id";
-        private String mdcKey = "traceId";
-        private boolean acceptIncoming = true;
-        private boolean generateIfMissing = true;
+        private String header;
+        private String mdcKey;
+        private boolean acceptIncoming;
+        private boolean generateIfMissing;
     }
 
     @Getter
     @Setter
     public static class Response {
-        private boolean includeCorrelationId = true;
-        private boolean includeTraceId = true;
+        private boolean includeCorrelationId;
+        private boolean includeTraceId;
     }
 
     @Getter
     @Setter
     public static class Validation {
-        private int maxIdLength = 128;
+        private int maxIdLength;
     }
 }

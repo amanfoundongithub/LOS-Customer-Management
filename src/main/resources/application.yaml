@@ -74,7 +74,26 @@ http:
     traceHeader: X-Trace-Id
     userAgent: "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"
 
-
+########################################
+# MDC configuration
+########################################
+mdc:
+  enabled: true 
+  correlation:
+    header: X-Correlation-Id 
+    mdcKey: correlationId 
+    acceptIncoming: true 
+    generateIfMissing: true
+  trace:
+    header: X-Trace-Id 
+    mdcKey: traceId 
+    acceptIncoming: true 
+    generateIfMissing: true
+  response:
+    includeCorrelationId: true 
+    includeTraceId: true
+  validation:
+    maxIdLength: 128
 
 logging:
   level:
@@ -168,8 +187,6 @@ event:
       dead-letter-enabled: true
       dead-letter-exchange: customer.events.dlx
       dead-letter-queue: customer.events.dlq
-
-# API configuration
 
 # External client configuration
 external:
