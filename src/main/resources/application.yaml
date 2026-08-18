@@ -26,14 +26,11 @@ spring:
         prefetch: 10
         concurrency: 1
         max-concurrency: 5
+  
 server:
   port: ${SERVER_PORT:8083}
   servlet:
     context-path: /customer-management
-customer-management:
-  customer-number:
-    prefix: CUST
-    length: 10
 
 logging:
   level:
@@ -41,17 +38,7 @@ logging:
     com.loan_org.customer_management: INFO
     org.springframework.data.mongodb: INFO
     org.springframework.amqp: INFO
-management:
-  endpoints:
-    web:
-      exposure:
-        include:
-          - health
-          - info
-          - metrics
-  endpoint:
-    health:
-      show-details: when_authorized
+
 info:
   app:
     name: Customer Management Service
