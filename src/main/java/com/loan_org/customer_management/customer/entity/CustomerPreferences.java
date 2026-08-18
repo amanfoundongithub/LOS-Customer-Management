@@ -22,12 +22,6 @@ public class CustomerPreferences {
     @Builder.Default
     private boolean marketingCommunicationEnabled = false;
 
-    /**
-     * Example:
-     * en
-     * hi
-     * te
-     */
     @Size(max = 10)
     @Pattern(
             regexp = "^[A-Za-z]{2,3}(-[A-Za-z]{2,4})?$",
@@ -35,12 +29,5 @@ public class CustomerPreferences {
     )
     private String preferredLanguage;
 
-    /**
-     * Example:
-     * EMAIL
-     * SMS
-     * PHONE
-     */
-    @Size(max = 30)
     private CommunicationChannel preferredCommunicationChannel;
 }
