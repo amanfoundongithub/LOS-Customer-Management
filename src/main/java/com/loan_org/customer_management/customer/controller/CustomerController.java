@@ -45,30 +45,30 @@ public class CustomerController {
         );
     }
 
-    @GetMapping("/id/{customerId}")
+    @GetMapping("/{customerId}")
     public ResponseEntity<CustomerResponse> getCustomerById(@PathVariable String customerId) {
-        return ResponseEntity.status(HttpStatus.OK).body(
+        return ResponseEntity.ok(
                 customerFetchService.getCustomerById(customerId)
         );
     }
 
     @GetMapping("/number/{customerNumber}")
     public ResponseEntity<CustomerResponse> getCustomerByCustomerNumber(@PathVariable String customerNumber) {
-        return ResponseEntity.status(HttpStatus.OK).body(
+        return ResponseEntity.ok(
                 customerFetchService.getCustomerByCustomerNumber(customerNumber)
         );
     }
 
     @GetMapping("/iam/{iamUserId}")
     public ResponseEntity<CustomerResponse> getCustomerByIamUserId(@PathVariable String iamUserId) {
-        return ResponseEntity.status(HttpStatus.OK).body(
+        return ResponseEntity.ok(
                 customerFetchService.getCustomerByIamUserId(iamUserId)
         );
     }
 
     @PutMapping("/{customerId}")
     public ResponseEntity<CustomerResponse> updateCustomer(@PathVariable String customerId, @Valid @RequestBody UpdateCustomerRequest request) {
-        return ResponseEntity.status(HttpStatus.OK).body(
+        return ResponseEntity.ok(
                 customerUpdateService.updateCustomer(customerId, request)
         );
     }
@@ -82,21 +82,21 @@ public class CustomerController {
 
     @GetMapping("/{customerId}/addresses")
     public ResponseEntity<List<AddressResponse>> getAddresses(@PathVariable String customerId) {
-        return ResponseEntity.status(HttpStatus.OK).body(
+        return ResponseEntity.ok(
             addressService.getAddresses(customerId)
         );
     }
 
     @GetMapping("/{customerId}/addresses/{addressId}")
     public ResponseEntity<AddressResponse> getAddress(@PathVariable String customerId, @PathVariable String addressId) {
-        return ResponseEntity.status(HttpStatus.OK).body(
+        return ResponseEntity.ok(
             addressService.getAddress(customerId, addressId)
         );
     }
 
     @PutMapping("/{customerId}/addresses/{addressId}")
     public ResponseEntity<AddressResponse> updateAddress(@PathVariable String customerId, @PathVariable String addressId, @Valid @RequestBody UpdateAddressRequest request) {
-        return ResponseEntity.status(HttpStatus.OK).body(
+        return ResponseEntity.ok(
             addressService.updateAddress(customerId, addressId, request)
         );
     }
@@ -108,7 +108,7 @@ public class CustomerController {
     }
 
     @PutMapping("/{customerId}/addresses/{addressId}/primary")
-    public ResponseEntity<AddressResponse> setPrimaryAddress(@PathVariable String customerId, @PathVariable String addressId) {
+    public ResponseEntity<Void> setPrimaryAddress(@PathVariable String customerId, @PathVariable String addressId) {
         addressService.setPrimaryAddress(customerId, addressId);
         return ResponseEntity.noContent().build();
     }
