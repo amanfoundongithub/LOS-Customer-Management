@@ -1,7 +1,7 @@
 package com.loan_org.customer_management.filter;
 
-import com.loan_org.customer_management.config.logging.RequestLoggingProperties;
-import com.loan_org.customer_management.config.mdc.MdcProperties;
+import com.loan_org.customer_management.properties.MdcProperties;
+import com.loan_org.customer_management.properties.RequestLoggingProperties;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

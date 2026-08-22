@@ -1,6 +1,5 @@
 package com.loan_org.customer_management.filter;
 
-import com.loan_org.customer_management.config.mdc.MdcProperties;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -12,6 +11,8 @@ import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
+
+import com.loan_org.customer_management.properties.MdcProperties;
 
 import java.io.IOException;
 import java.util.UUID;

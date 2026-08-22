@@ -1,4 +1,4 @@
-package com.loan_org.customer_management.config.mongo;
+package com.loan_org.customer_management.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

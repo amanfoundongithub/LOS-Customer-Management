@@ -1,4 +1,4 @@
-package com.loan_org.customer_management.config.http;
+package com.loan_org.customer_management.properties;
 
 import lombok.Getter;
 import lombok.Setter;

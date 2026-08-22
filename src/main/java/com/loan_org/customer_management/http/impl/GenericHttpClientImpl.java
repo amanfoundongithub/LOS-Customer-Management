@@ -1,9 +1,9 @@
 package com.loan_org.customer_management.http.impl;
 
-import com.loan_org.customer_management.config.http.HttpClientProperties;
 import com.loan_org.customer_management.http.GenericHttpClient;
 import com.loan_org.customer_management.http.exception.HttpClientException;
 import com.loan_org.customer_management.http.exception.HttpRetryException;
+import com.loan_org.customer_management.properties.HttpClientProperties;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

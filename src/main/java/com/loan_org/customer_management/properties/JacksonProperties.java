@@ -1,4 +1,4 @@
-package com.loan_org.customer_management.config.jackson;
+package com.loan_org.customer_management.properties;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
