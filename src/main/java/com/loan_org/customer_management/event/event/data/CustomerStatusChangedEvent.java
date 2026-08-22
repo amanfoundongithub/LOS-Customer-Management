@@ -1,6 +1,7 @@
 package com.loan_org.customer_management.event.event.data;
 
-import com.loan_org.customer_management.customer.enums.CustomerStatus;
+import com.loan_org.customer_management.entity.enums.CustomerStatus;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;

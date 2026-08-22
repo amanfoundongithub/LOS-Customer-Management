@@ -1,7 +1,7 @@
 package com.loan_org.customer_management.event.publisher;
 
-import com.loan_org.customer_management.customer.entity.CustomerDocument;
-import com.loan_org.customer_management.customer.enums.CustomerStatus;
+import com.loan_org.customer_management.entity.CustomerDocument;
+import com.loan_org.customer_management.entity.enums.CustomerStatus;
 
 public interface CustomerEventPublisher {
     void publishCustomerCreated(CustomerDocument customer);

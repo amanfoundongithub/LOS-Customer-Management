@@ -1,8 +1,8 @@
 package com.loan_org.customer_management.event.publisher.impl;
 
 import com.loan_org.customer_management.configuration.properties.MdcProperties;
-import com.loan_org.customer_management.customer.entity.CustomerDocument;
-import com.loan_org.customer_management.customer.enums.CustomerStatus;
+import com.loan_org.customer_management.entity.CustomerDocument;
+import com.loan_org.customer_management.entity.enums.CustomerStatus;
 import com.loan_org.customer_management.event.event.CustomerEvent;
 import com.loan_org.customer_management.event.event.data.CustomerAddressChangedEvent;
 import com.loan_org.customer_management.event.event.data.CustomerCreatedEvent;
