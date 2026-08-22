@@ -1,14 +1,15 @@
-package com.loan_org.customer_management.event.publisher;
+package com.loan_org.customer_management.event.publisher.impl;
 
 import com.loan_org.customer_management.configuration.properties.MdcProperties;
 import com.loan_org.customer_management.customer.entity.CustomerDocument;
 import com.loan_org.customer_management.customer.enums.CustomerStatus;
-import com.loan_org.customer_management.event.event.CustomerAddressChangedEvent;
-import com.loan_org.customer_management.event.event.CustomerCreatedEvent;
 import com.loan_org.customer_management.event.event.CustomerEvent;
-import com.loan_org.customer_management.event.event.CustomerIdentificationChangedEvent;
-import com.loan_org.customer_management.event.event.CustomerStatusChangedEvent;
-import com.loan_org.customer_management.event.event.CustomerUpdatedEvent;
+import com.loan_org.customer_management.event.event.data.CustomerAddressChangedEvent;
+import com.loan_org.customer_management.event.event.data.CustomerCreatedEvent;
+import com.loan_org.customer_management.event.event.data.CustomerIdentificationChangedEvent;
+import com.loan_org.customer_management.event.event.data.CustomerStatusChangedEvent;
+import com.loan_org.customer_management.event.event.data.CustomerUpdatedEvent;
+import com.loan_org.customer_management.event.publisher.CustomerEventPublisher;
 import com.loan_org.customer_management.event.routing.CustomerEventRoutingHelper;
 import com.loan_org.customer_management.outbox.service.OutboxService;
 

@@ -1,4 +1,4 @@
-package com.loan_org.customer_management.event.event;
+package com.loan_org.customer_management.event.event.data;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,13 +9,9 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class CustomerAddressChangedEvent {
-
+public class CustomerIdentificationChangedEvent {
     private String customerId;
-
     private String customerNumber;
-
-    private String addressId;
-
+    private String identificationId;
     private String changeType;
 }

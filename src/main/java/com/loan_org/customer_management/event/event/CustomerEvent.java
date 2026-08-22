@@ -12,20 +12,12 @@ import java.time.Instant;
 @NoArgsConstructor
 @AllArgsConstructor
 public class CustomerEvent<T> {
-
     private String eventId;
-
     private String eventType;
-
     private Instant occurredAt;
-
     private String customerId;
-
     private String customerNumber;
-
     private String correlationId;
-
     private String traceId;
-
     private T data;
 }
