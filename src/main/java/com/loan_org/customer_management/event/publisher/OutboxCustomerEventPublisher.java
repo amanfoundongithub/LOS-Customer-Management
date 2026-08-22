@@ -1,5 +1,6 @@
 package com.loan_org.customer_management.event.publisher;
 
+import com.loan_org.customer_management.configuration.properties.MdcProperties;
 import com.loan_org.customer_management.customer.entity.CustomerDocument;
 import com.loan_org.customer_management.customer.enums.CustomerStatus;
 import com.loan_org.customer_management.event.event.CustomerAddressChangedEvent;
@@ -10,7 +11,6 @@ import com.loan_org.customer_management.event.event.CustomerStatusChangedEvent;
 import com.loan_org.customer_management.event.event.CustomerUpdatedEvent;
 import com.loan_org.customer_management.event.routing.CustomerEventRoutingHelper;
 import com.loan_org.customer_management.outbox.service.OutboxService;
-import com.loan_org.customer_management.properties.MdcProperties;
 
 import lombok.RequiredArgsConstructor;
 import org.slf4j.MDC;

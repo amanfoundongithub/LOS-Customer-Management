@@ -1,4 +1,4 @@
-package com.loan_org.customer_management.properties;
+package com.loan_org.customer_management.configuration.properties;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 

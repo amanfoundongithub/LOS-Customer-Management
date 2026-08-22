@@ -1,4 +1,4 @@
-package com.loan_org.customer_management.config;
+package com.loan_org.customer_management.configuration.config;
 
 import lombok.RequiredArgsConstructor;
 
@@ -11,7 +11,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import com.loan_org.customer_management.properties.RabbitMQProperties;
+import com.loan_org.customer_management.configuration.properties.RabbitMQProperties;
 
 @Configuration
 @RequiredArgsConstructor

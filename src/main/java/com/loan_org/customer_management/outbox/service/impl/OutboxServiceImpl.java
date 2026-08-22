@@ -2,11 +2,11 @@ package com.loan_org.customer_management.outbox.service.impl;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.loan_org.customer_management.configuration.properties.RabbitMQProperties;
 import com.loan_org.customer_management.outbox.entity.OutboxEventDocument;
 import com.loan_org.customer_management.outbox.entity.OutboxEventStatus;
 import com.loan_org.customer_management.outbox.repository.OutboxEventRepository;
 import com.loan_org.customer_management.outbox.service.OutboxService;
-import com.loan_org.customer_management.properties.RabbitMQProperties;
 import com.loan_org.customer_management.utils.ErrorTruncator;
 
 import lombok.RequiredArgsConstructor;

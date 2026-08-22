@@ -12,7 +12,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 
-import com.loan_org.customer_management.properties.MdcProperties;
+import com.loan_org.customer_management.configuration.properties.MdcProperties;
 
 import java.io.IOException;
 import java.util.UUID;

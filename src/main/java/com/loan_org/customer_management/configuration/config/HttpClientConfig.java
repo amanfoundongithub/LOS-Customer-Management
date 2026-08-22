@@ -1,4 +1,4 @@
-package com.loan_org.customer_management.config;
+package com.loan_org.customer_management.configuration.config;
 
 
 import org.apache.hc.client5.http.config.ConnectionConfig;
@@ -14,7 +14,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.web.client.RestClient;
 
-import com.loan_org.customer_management.properties.HttpClientProperties;
+import com.loan_org.customer_management.configuration.properties.HttpClientProperties;
 
 import lombok.RequiredArgsConstructor;
 

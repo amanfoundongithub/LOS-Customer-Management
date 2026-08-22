@@ -2,13 +2,13 @@ package com.loan_org.customer_management.outbox.publisher;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.loan_org.customer_management.configuration.properties.MdcProperties;
+import com.loan_org.customer_management.configuration.properties.OutboxProperties;
+import com.loan_org.customer_management.configuration.properties.RabbitMQProperties;
 import com.loan_org.customer_management.outbox.entity.OutboxEventDocument;
 import com.loan_org.customer_management.outbox.entity.OutboxEventStatus;
 import com.loan_org.customer_management.outbox.repository.OutboxEventRepository;
 import com.loan_org.customer_management.outbox.service.OutboxService;
-import com.loan_org.customer_management.properties.MdcProperties;
-import com.loan_org.customer_management.properties.OutboxProperties;
-import com.loan_org.customer_management.properties.RabbitMQProperties;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
